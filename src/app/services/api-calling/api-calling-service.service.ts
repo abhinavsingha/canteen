@@ -48,6 +48,26 @@ export class ApiCallingServiceService {
   }
 
 
+  getApiWithToken(url: any) {
+    this.token=localStorage.getItem('token');
+    if(this.token!=null) {
+      debugger;
+      const headers = new HttpHeaders({
+        'Authorization': this.token
+      });
+      return this.http.get(url,{headers}).pipe(
+        map((results) => results),
+        catchError(this.handleError)
+      );
+    }
+    else{
+      debugger;
+      console.log(localStorage.getItem('token'));
+      return this.http.get(url).pipe(
+        map((results) => results),
+        catchError(this.handleError));
+    }
+  }
   getApi(url: any) {
     return this.http.get(url).pipe(
       map((results) => results),
@@ -55,39 +75,16 @@ export class ApiCallingServiceService {
     );
   }
 
-  // getToeknApi(url: any, token: any) {
-  //   // console.log(token + " jsonPayload " + url);
-  //   const headers = new HttpHeaders().set('Authorization', `Bearer ` + token);
-  //   return this.http.get(url, { headers: headers }).pipe(
-  //     map((results) => results),
-  //     catchError(this.handleError)
-  //   );
-  // }
-
-  // getToeknApiForBudget(url: any, token: any) {
-  //   // console.log(token + " jsonPayload " + url);
-  //   const headers = new HttpHeaders().set('token', token);
-  //   return this.http.get(url, { headers: headers }).pipe(
-  //     map((results) => results),
-  //     catchError(this.handleError)
-  //   );
-  // }
-
   private handleError(error: Response | any) {
     let errMsg: string;
-    // return throwError(() => error);
     if (error instanceof Response) {
       const err = error || '';
       errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
     } else {
       errMsg = error.message ? error.message : error.toString();
-      //  errMsg = "No internet connection."
     }
     console.error(error);
     return throwError(() => error);
-    // return throwError(
-    //   () => {
-    //     const error: any = new Error(`This is error number ${errMsg}`);
-    //   });
+
   }
 }
